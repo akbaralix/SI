@@ -1,0 +1,145 @@
+@import url(https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;800;900&display=swap);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 16px;
+  background-color: rgb(255, 255, 255);
+  color: white;
+}
+.container {
+  max-width: 750px;
+  width: 100%;
+  background-color: rgb(93, 12, 169);
+  height: 100vh;
+  padding: 10px;
+  position: relative;
+}
+.main-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.chat-header {
+  border-bottom: 1px solid white;
+}
+.chat-header h1 {
+  font-size: 30px;
+  text-align: center;
+}
+.chat-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  box-shadow: 2px 10px 10px rgba(0, 0, 0, 0.8);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.chat-footer input {
+  width: 100%;
+  border-radius: 14px;
+  background: none;
+  border: 1px solid white;
+  color: white;
+  padding: 14px;
+  font-size: 18px;
+  outline: none;
+font-family: "Poppins", sans-serif"
+}
+.chat-footer input::placeholder{
+    color: #bcbbbb;
+}
+.chat-footer button {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  background-color: rgb(81, 0, 210);
+  color: white;
+  padding: 12px;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: scroll;
+  height: 86%;
+  padding: 10px;
+  scrollbar-width: none;
+  margin-bottom: 40px;
+}
+.user-msg {
+  background-color: #870fdc;
+  color: white;
+  padding: 10px 15px;
+  border-bottom-left-radius: 15px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  max-width: 70%;
+  margin: 5px 0;
+  align-self: flex-end;
+  word-wrap: break-word;
+}
+.ai-msg {
+  color: white;
+  border-radius: 15px;
+  margin: 5px 0;
+  align-self: flex-start;
+  word-wrap: break-word;
+}
+.show-aimsg {
+  animation: shkale 0.5s ease-in-out;
+}
+@keyframes shkale {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.active-user {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 20px;
+  position: absolute;
+}
+.animation-onlinne {
+  width: 13px;
+  height: 13px;
+  background-color: rgb(5, 206, 5);
+  border-radius: 50%;
+  animation: scale 2s infinite ease-in-out;
+  margin-top: 3px;
+  margin-right: 7px;
+}
+@keyframes scale {
+  0% {
+    transform: scale(0.4);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.4);
+  }
+}
+#online-user {
+  font-size: 18px;
+  font-weight: 600;
+}

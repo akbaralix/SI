@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ai bilan ishlash</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="main-chat">
+        <div class="chat-header">
+          <div class="active-user">
+            <span class="animation-onlinne"></span>
+            <i class="fa-solid fa-user"></i>
+            <span id="online-user">0</span>
+          </div>
+          <h1>SI</h1>
+        </div>
+        <div class="chat"></div>
+        <div class="chat-footer">
+          <input id="text" type="text" placeholder="Sorang" />
+          <button onclick="sendMsg()">
+            <i class="fa-solid fa-arrow-up"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <script>
+      async function getAIResponse(prompt) {
+        const response = await fetch("http://localhost:3000/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: prompt,
+          }),
+        });
+        const data = await response.json();
+        return data.reply;
+      }
+
+      async function sendMsg() {
+        const input = document.getElementById("text");
+        const text = input.value.trim();
+        if (!text) return;
+
+        const chatDiv = document.querySelector(".chat");
+
+        // USER MSG
+        const userMsg = document.createElement("div");
+        userMsg.className = "user-msg";
+        userMsg.textContent = text;
+        chatDiv.appendChild(userMsg);
+
+        input.value = "";
+
+        // AI RESPONSE
+        const aiResponse = await getAIResponse(text);
+
+        const aiMsg = document.createElement("div");
+        aiMsg.className = "ai-msg";
+        aiMsg.innerHTML = marked.parse(aiResponse);
+        chatDiv.appendChild(aiMsg);
+
+        // faqat yangi xabarga animatsiya
+        requestAnimationFrame(() => {
+          aiMsg.classList.add("show-aimsg");
+        });
+      }
+
+      const socket = io("http://localhost:3000");
+      const onlineCount = document.getElementById("online-user");
+
+      socket.on("onlineUsers", (count) => {
+        onlineCount.innerText = count;
+      });
+      document.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          sendMsg();
+        }
+      });
+    </script>
+  </body>
+</html>
