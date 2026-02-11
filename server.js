@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 const app = express();
@@ -70,6 +72,11 @@ app.post("/chat", async (req, res) => {
     res.status(500).json({ reply: "AI bilan bog‘liq xatolik yuz berdi" });
   }
 });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, "public")));
 
 httpServer.listen(3000, () => {
   console.log("Server is running on port 3000");

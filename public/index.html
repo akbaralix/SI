@@ -25,7 +25,7 @@
         </div>
         <div class="chat"></div>
         <div class="chat-footer">
-          <input id="text" type="text" placeholder="Sorang" />
+          <input id="text" type="text" placeholder="Sorang..." />
           <button onclick="sendMsg()">
             <i class="fa-solid fa-arrow-up"></i>
           </button>
@@ -34,15 +34,18 @@
     </div>
     <script>
       async function getAIResponse(prompt) {
-        const response = await fetch("http://localhost:3000/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          "https://suniy-intelekt-x4zv.onrender.com/chat",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: prompt,
+            }),
           },
-          body: JSON.stringify({
-            message: prompt,
-          }),
-        });
+        );
         const data = await response.json();
         return data.reply;
       }
@@ -76,7 +79,7 @@
         });
       }
 
-      const socket = io("http://localhost:3000");
+      const socket = io("https://suniy-intelekt-x4zv.onrender.com");
       const onlineCount = document.getElementById("online-user");
 
       socket.on("onlineUsers", (count) => {
