@@ -23,7 +23,11 @@
           </div>
           <h1>SI</h1>
         </div>
-        <div class="chat"></div>
+        <div class="chat">
+          <div class="main-text">
+            <h2>Salom SI dan hohlagan narsani sorang</h2>
+          </div>
+        </div>
         <div class="chat-footer">
           <input id="text" type="text" placeholder="Sorang..." />
           <button onclick="sendMsg()">
@@ -34,24 +38,24 @@
     </div>
     <script>
       async function getAIResponse(prompt) {
-        const response = await fetch(
-          "https://suniy-intelekt-x4zv.onrender.com/chat",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              message: prompt,
-            }),
+        const response = await fetch("http://localhost:3000/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({
+            message: prompt,
+            userId: socket.id,
+          }),
+        });
         const data = await response.json();
         return data.reply;
       }
 
       async function sendMsg() {
         const input = document.getElementById("text");
+        const mainText = document.querySelector(".main-text");
+        if (mainText) mainText.remove();
         const text = input.value.trim();
         if (!text) return;
 
@@ -73,13 +77,33 @@
         aiMsg.innerHTML = marked.parse(aiResponse);
         chatDiv.appendChild(aiMsg);
 
+        aiMsg.querySelectorAll("pre").forEach((block) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "code-wrapper";
+          block.parentNode.insertBefore(wrapper, block);
+          wrapper.appendChild(block);
+
+          const btn = document.createElement("button");
+          btn.textContent = "Nusxalash";
+          btn.className = "copy-btn";
+          block.prepend(btn);
+          btn.addEventListener("click", () => {
+            navigator.clipboard.writeText(block.textContent);
+            btn.textContent = "Nusxalandi";
+            setTimeout(() => {
+              btn.textContent = "Nusxalash";
+            }, 2000);
+          });
+        });
+
         // faqat yangi xabarga animatsiya
         requestAnimationFrame(() => {
           aiMsg.classList.add("show-aimsg");
         });
+        chatDiv.scrollTop = chatDiv.scrollHeight;
       }
 
-      const socket = io("https://suniy-intelekt-x4zv.onrender.com");
+      const socket = io("http://localhost:3000");
       const onlineCount = document.getElementById("online-user");
 
       socket.on("onlineUsers", (count) => {
@@ -88,6 +112,13 @@
       document.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
           sendMsg();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (/^[a-zA-Z]$/.test(e.key)) {
+          const input = document.getElementById("text");
+
+          input.focus();
         }
       });
     </script>

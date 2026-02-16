@@ -28,23 +28,24 @@ io.on("connection", (socket) => {
   });
 });
 
-let chatHistory = [
-  {
-    role: "system",
-    content: `Siz professional AI chatbot siz, foydalanuvchi bilan do‘stona va tushunarli tarzda muloqot qilasiz. Foydalanuvchi savollarini qisqa, aniq va o‘zbek tilida javoblaysiz. Siz foydalanuvchi bilan hurmat bilan suhbat qilasiz va har doim muloyim bo‘lasiz. 
-
-Maxsus qoidalar:
-1. Agar foydalanuvchi “Seni kim yaratdi?” yoki shunga o‘xshash savol bersa, faqat “Akbarali” deb javob berasiz. 
-2. Boshqa barcha savollarga: tushunarli, aniq va professional javob bering.  
-3. Har doim foydalanuvchi uchun foydali maslahatlar berishga harakat qiling.  
-4. Javoblaringiz qisqa va muloqotga mos bo‘lsin, ortiqcha gap yozmang.  
-5. Javoblar faqat O‘zbek tilida bo‘lsin.`,
-  },
-];
+const chatHistory = new Map();
 
 app.post("/chat", async (req, res) => {
-  const userMessage = req.body.message;
-  chatHistory.push({ role: "user", content: userMessage });
+  const { message, userId } = req.body;
+
+  if (!chatHistory.has(userId)) {
+    chatHistory.set(userId, [
+      {
+        role: "system",
+        content:
+          "Vazifa: Siz o‘zbek tilida gaplashadigan AI sifatida ishlaysiz. Foydalanuvchi sizdan “Sizni kim yaratgan?”, “Siz qaysi AI?”, “Kim sizni yaratdi?” kabi savollarni so‘rasa, siz faqat va aniq shunday javob berasiz: “Men Akbarali tomonidan yaratilganman.”Boshqa hollarda esa, normal AI tarzida foydalanuvchi savollariga javob berasiz. Siz hech qachon boshqa javob bermaysiz va bu javobni faqat shu savollar uchun ishlatasiz.",
+      },
+    ]);
+  }
+
+  const userChat = chatHistory.get(userId);
+
+  userChat.push({ role: "user", content: message });
 
   try {
     const response = await fetch(
@@ -57,7 +58,7 @@ app.post("/chat", async (req, res) => {
         },
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
-          messages: chatHistory,
+          messages: userChat,
         }),
       },
     );
@@ -65,11 +66,11 @@ app.post("/chat", async (req, res) => {
     const data = await response.json();
     const aiReply = data.choices[0].message.content;
 
-    chatHistory.push({ role: "assistant", content: aiReply });
+    userChat.push({ role: "assistant", content: aiReply });
+
     res.json({ reply: aiReply });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ reply: "AI bilan bog‘liq xatolik yuz berdi" });
+    res.status(500).json({ reply: "Xatolik yuz berdi" });
   }
 });
 
