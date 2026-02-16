@@ -38,7 +38,7 @@
     </div>
     <script>
       async function getAIResponse(prompt) {
-        const response = await fetch("http://localhost:3000/chat", {
+        const response = await fetch("https://si-7v7u.onrender.com/chat", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -103,7 +103,7 @@
         chatDiv.scrollTop = chatDiv.scrollHeight;
       }
 
-      const socket = io("http://localhost:3000");
+      const socket = io("https://si-7v7u.onrender.com/");
       const onlineCount = document.getElementById("online-user");
 
       socket.on("onlineUsers", (count) => {
